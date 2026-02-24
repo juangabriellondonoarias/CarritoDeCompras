@@ -43,3 +43,108 @@ La arquitectura del proyecto está pensada para ser modular y escalable:
 
 ## Capturas de pantalla
 ![alt text](image.png)
+
+
+## ¿Cómo se mide la cobertura en JavaScript?
+La cobertura de código se mide a través de un proceso llamado Instrumentación (Code Instrumentation).
+Las herramientas de prueba toman el código fuente y le inyectan pequeños "contadores" invisibles antes de ejecutar las pruebas unitarias. A medida que las pruebas se ejecutan, estos contadores registran exactamente qué partes del código fueron visitadas y cuáles no. Al finalizar, el sistema calcula el porcentaje matemático del código ejecutado frente al total del código disponible.
+
+## ¿Qué herramientas permiten medir cobertura?
+En el ecosistema de JavaScript, las herramientas más utilizadas son:
+
+Jest: Es el framework más popular actualmente. Trae su propio medidor de cobertura integrado por defecto (basado en Istanbul/V8), por lo que solo requiere agregar el comando --coverage.
+
+Istanbul (nyc): Es el motor clásico y el estándar de la industria para medir cobertura en JS. Muchas otras herramientas lo usan por debajo.
+
+Vitest: Un framework moderno y muy rápido, diseñado especialmente para proyectos que usan Vite (muy usado con React o Vue).
+
+Mocha + Chai: Son herramientas de pruebas muy robustas, pero requieren instalar Istanbul (nyc) por separado para poder generar los reportes de cobertura.
+
+## ¿Cómo se configuran los umbrales mínimos (Thresholds)?
+Los umbrales mínimos se configuran para obligar a que el proyecto mantenga un nivel de calidad. Si las pruebas corren y la cobertura está por debajo de los porcentajes exigidos, el sistema lanza un error y la prueba falla.
+
+En herramientas como Jest, esto se configura en el archivo package.json o en jest.config.js. 
+Ejemplo de configuración:
+
+"jest": {
+  "coverageThreshold": {
+    "global": {
+      "functions": 90,
+      "lines": 90,
+      "statements": 90,
+      "branches": 80
+    }
+  }
+}
+
+## ¿Qué significa cada tipo de cobertura?
+Las herramientas evalúan el código basándose en 4 métricas principales:
+
+Functions (Funciones): Mide el porcentaje de funciones creadas en el código que fueron llamadas y ejecutadas al menos una vez por las pruebas.
+
+Lines (Líneas): Mide el porcentaje de líneas físicas de código fuente que fueron recorridas durante la ejecución de las pruebas.
+
+Statements (Sentencias): Es más preciso que las líneas. Mide cuántas instrucciones individuales se ejecutaron. Esto es importante porque en JavaScript puedes escribir múltiples sentencias en una sola línea física (ej. let a = 1; let b = 2;).
+
+Branches (Ramas / Bifurcaciones): Es la métrica más estricta. Evalúa las decisiones lógicas del código (if, else, switch, operadores ternarios). Para alcanzar el 100% en esta métrica, las pruebas deben simular todos los caminos posibles (por ejemplo, probar qué pasa cuando un if es verdadero, y hacer otra prueba para cuando el mismo if es falso).
+
+
+✅ Uso de jsdom
+
+## ¿Qué es jsdom?
+JSDOM es una biblioteca que implementa los estándares web (HTML y el DOM) puramente en JavaScript para que puedan ejecutarse dentro de un entorno de Node.js. En palabras sencillas, es un "navegador sin pantalla" o un "simulador de navegador" que vive directamente en la terminal de comandos.
+
+## ¿Para qué sirve?
+Por defecto, herramientas de testing como Jest se ejecutan en Node.js, el cual no tiene un entorno gráfico ni entiende qué es un document, un window o un innerHTML.
+JSDOM sirve para engañar al código JavaScript, haciéndole creer que se está ejecutando en Google Chrome o Firefox. Esto nos permite probar funciones que manipulan la interfaz gráfica (hacer clics en botones, leer textos de un <p>, o crear <div> dinámicos) sin necesidad de abrir un navegador real, haciendo que las pruebas sean extremadamente rápidas (milisegundos).
+
+## ¿Cómo se integra en las pruebas?
+Para integrarlo en un proyecto con Jest, se realizan dos pasos sencillos:
+
+Instalación: Se instala el paquete a través de npm junto con Jest:
+
+Bash
+npm install --save-dev jest-environment-jsdom
+
+Configuración: Se le indica a Jest que utilice este entorno. Puede hacerse de forma global en el package.json o agregando un comentario especial en la primera línea del archivo de pruebas (app.test.js):
+
+JavaScript
+/**
+ * @jest-environment jsdom
+ */
+
+ ## Demostración: Prueba utilizando jsdom
+En el proyecto del carrito de compras, utilizamos jsdom para simular la estructura HTML básica y probar qué ocurre cuando un usuario hace clic real en el botón de "Vaciar Carrito".
+
+Este es un ejemplo de cómo JSDOM nos permite buscar un botón por su ID (document.getElementById) y simular el evento .click() en la terminal:
+
+* @jest-environment jsdom
+ */
+const { agregarAlCarrito, getCarrito } = require('./app.js');
+
+describe('Interacciones con el DOM usando jsdom', () => {
+    
+    // 1. Preparamos el DOM simulado antes de la prueba
+    beforeEach(() => {
+        document.body.innerHTML = `
+            <div id="items-carrito"></div>
+            <button id="btn-vaciar">Vaciar Carrito</button>
+        `;
+    });
+
+    test('Debe vaciar todo el carrito al hacer clic en el botón (Simulación de DOM)', () => {
+        // Llenamos el carrito con 2 productos lógicos
+        agregarAlCarrito(101);
+        agregarAlCarrito(102);
+        expect(getCarrito().length).toBe(2);
+
+        // Usamos jsdom para buscar el botón en el HTML simulado
+        const btnVaciar = document.getElementById('btn-vaciar');
+        
+        // Ejecutamos el evento click tal como lo haría un usuario
+        btnVaciar.click();
+
+        // Verificamos que la lógica haya respondido a la acción del DOM
+        expect(getCarrito().length).toBe(0);
+    });
+});
