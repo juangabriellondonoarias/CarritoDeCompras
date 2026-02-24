@@ -14,8 +14,10 @@ Es una aplicación web interactiva que simula el menú y el carrito de compras d
 
 **2. Para ejecutar las pruebas unitarias:**
 Abre tu terminal en la carpeta del proyecto y ejecuta los siguientes comandos:
-\`\`\`bash
-npm install   # Instala las dependencias de Jest (solo la primera vez)
+\`\`\`bash,
+
+npm install   # Instala las dependencias de Jest (solo la primera vez),
+
 npm test      # Ejecuta la batería de pruebas y muestra el reporte de cobertura
 \`\`\`
 
@@ -44,6 +46,35 @@ La arquitectura del proyecto está pensada para ser modular y escalable:
 ## Capturas de pantalla
 ![alt text](image.png)
 
+## pruebas Unitarias
+
+> carritodecompras@1.0.0 test
+> jest --coverage
+
+ PASS  mi-carrito-app/js/app.test.js
+  Lógica del Carrito de Compras (Negocio)
+    √ 1. Debe agregar un producto nuevo al carrito (2 ms)
+    √ 2. Debe aumentar la cantidad si el producto ya existe en el carrito (1 ms)
+    √ 3. Debe eliminar un producto del carrito por completo (1 ms)
+    √ 4. Debe restar 1 a la cantidad usando el botón "-" (1 ms)
+    √ 5. Debe eliminar el producto si la cantidad llega a 0 al restar
+    √ 6. Debe vaciar todo el carrito al hacer clic en "Vaciar Carrito" (13 ms)
+    √ 7. Debe mostrar alertas y vaciar el carrito al "Finalizar Compra" (2 ms)
+    √ 8. Debe aumentar la cantidad usando el botón "+"
+    √ 9. Debe cargar el carrito desde localStorage al cargar la página (DOMContentLoaded) (20 ms)
+    √ 10. Debe dejar el carrito vacío al cargar la página si no hay nada en localStorage (5 ms)
+
+----------|---------|----------|---------|---------|---------------------------------
+File      | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
+----------|---------|----------|---------|---------|---------------------------------
+All files |   89.47 |    78.57 |   84.61 |   88.23 |                                 
+ app.js   |   89.47 |    78.57 |   84.61 |   88.23 | 130-131,135-136,140-141,145-146
+----------|---------|----------|---------|---------|---------------------------------
+Test Suites: 1 passed, 1 total
+Tests:       10 passed, 10 total
+Snapshots:   0 total
+Time:        1.052 s, estimated 2 s
+Ran all test suites.
 
 ## ¿Cómo se mide la cobertura en JavaScript?
 La cobertura de código se mide a través de un proceso llamado Instrumentación (Code Instrumentation).
@@ -148,3 +179,9 @@ describe('Interacciones con el DOM usando jsdom', () => {
         expect(getCarrito().length).toBe(0);
     });
 });
+
+## Reflexión sobre qué partes fueron más difíciles de cubrir.
+
+La refactorizacion de codigo ya separando la logica del dom ya que es una responsabilidad unica y asi que el codigo quede mas legible de leer y de entender.
+Usar jsdom para simular el navegador para verificar que las pruebas esten correctas y el localStorage en node.js.
+Evaluar caminos alternos y casos externoa para alcanzar la cobertura de ramas, demostrando que testear o hacer pruebas unitarias requiere codigo modular y que son muy importantes para el desarrollo.
