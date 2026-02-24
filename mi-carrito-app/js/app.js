@@ -1,7 +1,7 @@
 // 1. BASE DE DATOS (Datos crudos)
 
 const productos = [
-    {id:101, nombre:'Hamburguesa', precio:15000, descripcion:'Delicia artesanal con queso', imagen: '/mi-carrito-app/assets/img/hamburguesa-especial.png'},
+    {id:101, nombre:'Hamburguesa', precio:15000, descripcion:'Delicia artesanal con queso', imagen: '../assets/img/hamburguesa-especial.png'},
     {id:102, nombre:'Perro Caliente', precio:10000, descripcion:'Tradición urbana colombiana', imagen:'/mi-carrito-app/assets/img/peroro-especial.png'},
     {id:103, nombre:'Pollo', precio:20000, descripcion:'Crujiente dorado irresistible', imagen:'/mi-carrito-app/assets/img/pollo.png'},
     {id:104, nombre:'Cocacola', precio:5000, descripcion:'Sabor original incomparable', imagen:'/mi-carrito-app/assets/img/cocacola.webp'},
